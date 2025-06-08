@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이재명 대통령 정책공약 카드뉴스</title>
+    
+    <!-- 페이스북 공유 최적화 메타 태그 -->
+    <meta property="og:title" content="이재명 대통령 정책공약 카드뉴스">
+    <meta property="og:description" content="더불어민주당 제21대 총선 주요 정책공약을 분야별로 정리한 카드뉴스입니다.">
+    <meta property="og:image" content="">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="이재명 대통령 정책공약">
+    
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .card-slider {
+            width: 100%;
+            height: 650px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s ease;
+            transform: translateX(100px);
+        }
+        
+        .card.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+        
+        .card-content {
+            padding: 35px;
+            flex: 1;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-subtitle {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0.95;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+        
+        .card-description {
+            font-size: 15px;
+            line-height: 1.5;
+            font-weight: 400;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .highlight {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            display: inline-block;
+            margin: 1px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .number {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #1a1a1a;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: 800;
+            display: inline-block;
+            margin: 1px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+        }
+        
+        .policy-table {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .policy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .policy-item:last-child {
+            border-bottom: none;
+        }
+        
+        .policy-name {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .policy-value {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .card-emoji {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            font-size: 50px;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-navigation {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 3;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .nav-btn:hover {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.25));
+            transform: scale(1.1);
+        }
+        
+        .card-indicators {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+        
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .indicator.active {
+            width: 30px;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border-color: #FFD700;
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* 각 카드의 그라데이션 배경 */
+        #card-0 { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #3b82f6 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-1 { 
+            background: linear-gradient(135deg, #134e4a 0%, #0f766e 50%, #0d9488 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-2 { 
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #ef4444 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-3 { 
+            background: linear-gradient(135deg, #431407 0%, #ea580c 50%, #fb923c 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-4 { 
+            background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #6366f1 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-5 { 
+            background: linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-6 { 
+            background: linear-gradient(135deg, #831843 0%, #be185d 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-7 { 
+            background: linear-gradient(135deg, #164e63 0%, #0891b2 50%, #22d3ee 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-8 { 
+            background: linear-gradient(135deg, #365314 0%, #65a30d 50%, #84cc16 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-9 { 
+            background: linear-gradient(135deg, #a21caf 0%, #c026d3 50%, #d946ef 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        #card-10 { 
+            background: linear-gradient(135deg, #713f12 0%, #d97706 50%, #f59e0b 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .bullet-point {
+            margin: 8px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .bullet-point::before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .card-slider {
+                height: 600px;
+            }
+            
+            .card-content {
+                padding: 25px;
+            }
+            
+            .card-title {
+                font-size: 22px;
+            }
+            
+            .card-description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-slider">
+            <!-- 카드 1 - 소개 -->
+            <div class="card active" id="card-0">
+                <div class="card-content">
+                    <h2 class="card-title">이재명 대통령 정책공약</h2>
+                    <h3 class="card-subtitle">더불어민주당 제21대 총선</h3>
+                    <p class="card-description">국민의 일상과 미래를 바꿀 <span class="highlight">혁신적인 정책들</span>을 분야별로 소개합니다. <span class="highlight">재정, 금융, 노동, TMT, 산업정책, 공정거래</span> 등 각 영역의 핵심 공약을 확인해보세요.</p>
+                </div>
+                <div class="card-emoji">🇰🇷</div>
+            </div>
+            
+            <!-- 카드 2 - 재정 정책 -->
+            <div class="card" id="card-1">
+                <div class="card-content">
+                    <h2 class="card-title">재정 정책</h2>
+                    <h3 class="card-subtitle">해운재건 & 벤처투자 활성화</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">스톡옵션 비과세</span>
+                            <span class="policy-value">3천만원 → 1억원</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">기술혁신형 M&A</span>
+                            <span class="policy-value">10% → 20%</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">선박금융 민간투자자</span> 세제혜택 부여</div>
+                    <div class="bullet-point"><span class="highlight">증권거래세 점진적 폐지</span> 및 양도소득세 전환</div>
+                    <div class="bullet-point">코스닥·코넥스 전용 <span class="number">장기투자펀드</span> 신설</div>
+                </div>
+                <div class="card-emoji">💰</div>
+            </div>
+            
+            <!-- 카드 3 - 금융 정책 -->
+            <div class="card" id="card-2">
+                <div class="card-content">
+                    <h2 class="card-title">금융 정책</h2>
+                    <h3 class="card-subtitle">기업 자금조달 혁신</h3>
+                    <div class="bullet-point"><span class="highlight">기업대출 인센티브</span> 부여, 부동산 담보대출 관행 개선</div>
+                    <div class="bullet-point"><span class="highlight">동산담보대출 활성화</span>로 다양한 자산 담보 허용</div>
+                    <div class="bullet-point"><span class="highlight">미래가치·성장성 중심</span> 기업평가방식 전면혁신</div>
+                    <div class="bullet-point">소규모·특화 금융회사 신설 <span class="number">진입요건 완화</span></div>
+                    <div class="bullet-point"><span class="highlight">핀테크·디지털 금융혁신</span> 지원 강화</div>
+                </div>
+                <div class="card-emoji">🏦</div>
+            </div>
+            
+            <!-- 카드 4 - 노동 정책 -->
+            <div class="card" id="card-3">
+                <div class="card-content">
+                    <h2 class="card-title">노동 정책</h2>
+                    <h3 class="card-subtitle">상시·지속업무 정규직 원칙</h3>
+                    <div class="bullet-point"><span class="highlight">상시·지속업무 정규직</span> 고용원칙 확립</div>
+                    <div class="bullet-point">비정규직 <span class="highlight">차별 ZERO화</span> 실현</div>
+                    <div class="bullet-point"><span class="number">1년 미만 근속 노동자</span> 퇴직급여 보장</div>
+                    <div class="bullet-point"><span class="highlight">특수고용·플랫폼 노동자</span> 권익 보장</div>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">체당금 지급기간</span>
+                            <span class="policy-value">7개월 → 2개월</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-emoji">👥</div>
+            </div>
+            
+            <!-- 카드 5 - TMT 정책 -->
+            <div class="card" id="card-4">
+                <div class="card-content">
+                    <h2 class="card-title">TMT 정책</h2>
+                    <h3 class="card-subtitle">디지털 혁신과 스마트화</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">스마트상점</span>
+                            <span class="policy-value">매년 25곳</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">드론택배·택시</span>
+                            <span class="policy-value">2023년 상용화</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">완전자율주행</span>
+                            <span class="policy-value">2024년 상용화</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">스마트시티</span>
+                            <span class="policy-value">2025년 전국토</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">중소기업 ICT 솔루션</span> 도입 확산</div>
+                </div>
+                <div class="card-emoji">📱</div>
+            </div>
+            
+            <!-- 카드 6 - 산업정책 1 -->
+            <div class="card" id="card-5">
+                <div class="card-content">
+                    <h2 class="card-title">신산업 육성</h2>
+                    <h3 class="card-subtitle">BIG3 차세대 주력산업</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">시스템반도체</span>
+                            <span class="policy-value">2030년 강국</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">미래차</span>
+                            <span class="policy-value">2030년 1위</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">바이오헬스</span>
+                            <span class="policy-value">5대 주력산업</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point">차세대 지능형 반도체 R&D <span class="number">10년간 1조원</span> 투자</div>
+                    <div class="bullet-point"><span class="highlight">제조업 DNA</span> (Data·Network·AI) 접목</div>
+                </div>
+                <div class="card-emoji">🚀</div>
+            </div>
+            
+            <!-- 카드 7 - 산업정책 2 -->
+            <div class="card" id="card-6">
+                <div class="card-content">
+                    <h2 class="card-title">중견기업 & 소재부품장비</h2>
+                    <h3 class="card-subtitle">글로벌 경쟁력 강화</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">글로벌 강소기업</span>
+                            <span class="policy-value">매년 200개사</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">집중 지원</span>
+                            <span class="policy-value">3년간 5조원</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">스마트공장</span>
+                            <span class="policy-value">2022년 3만개</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">소재·부품·장비</span> 핵심기술 조기 확보</div>
+                    <div class="bullet-point"><span class="number">100대 품목</span> 조기 공급안정성 확보</div>
+                </div>
+                <div class="card-emoji">🔧</div>
+            </div>
+            
+            <!-- 카드 8 - 스타트업 지원 -->
+            <div class="card" id="card-7">
+                <div class="card-content">
+                    <h2 class="card-title">스타트업 생태계</h2>
+                    <h3 class="card-subtitle">유니콘 기업 육성</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">예비창업자 발굴</span>
+                            <span class="policy-value">5년간 1만명</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">TIPS 창업팀</span>
+                            <span class="policy-value">매년 500개</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">사업화 자금</span>
+                            <span class="policy-value">최대 1억원</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">글로벌 스타트업 페스티벌</span> 고도화</div>
+                    <div class="bullet-point"><span class="highlight">AI 스타트업</span> 전문 액셀러레이터 활성화</div>
+                </div>
+                <div class="card-emoji">🦄</div>
+            </div>
+            
+            <!-- 카드 9 - 그린뉴딜 -->
+            <div class="card" id="card-8">
+                <div class="card-content">
+                    <h2 class="card-title">그린뉴딜</h2>
+                    <h3 class="card-subtitle">탄소제로 사회 구현</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">미세먼지 감축</span>
+                            <span class="policy-value">2040년 10㎍/㎥</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">수소충전소</span>
+                            <span class="policy-value">2030년 660기</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">석탄발전소 신규건설 금지</span>, 노후발전소 폐지</div>
+                    <div class="bullet-point"><span class="highlight">재생에너지 3020</span> 목표 달성</div>
+                    <div class="bullet-point"><span class="highlight">수소경제 활성화</span>로 모빌리티·에너지 양대축 구축</div>
+                </div>
+                <div class="card-emoji">🌱</div>
+            </div>
+            
+            <!-- 카드 10 - 공정거래 -->
+            <div class="card" id="card-9">
+                <div class="card-content">
+                    <h2 class="card-title">공정거래</h2>
+                    <h3 class="card-subtitle">상생협력 & 불공정 척결</h3>
+                    <div class="policy-table">
+                        <div class="policy-item">
+                            <span class="policy-name">기술유용 손해배상</span>
+                            <span class="policy-value">10배 상향</span>
+                        </div>
+                        <div class="policy-item">
+                            <span class="policy-name">상생협력기금</span>
+                            <span class="policy-value">신규 1조원</span>
+                        </div>
+                    </div>
+                    <div class="bullet-point"><span class="highlight">가맹사업·대리점</span> 상생협력 강화</div>
+                    <div class="bullet-point"><span class="highlight">공정위 전속고발권제 폐지</span>로 신속한 구제</div>
+                    <div class="bullet-point">다중대표소송제 도입으로 <span class="number">기업 투명성</span> 확보</div>
+                </div>
+                <div class="card-emoji">⚖️</div>
+            </div>
+            
+            <!-- 카드 11 - 마무리 -->
+            <div class="card" id="card-10">
+                <div class="card-content">
+                    <h2 class="card-title">국민과 함께하는</h2>
+                    <h3 class="card-subtitle">혁신 대한민국</h3>
+                    <p class="card-description">이재명 대통령의 정책공약은 모든 국민이 더 나은 일상을 누릴 수 있는 <span class="highlight">포용적 성장</span>을 목표로 합니다. <span class="highlight">혁신과 상생, 지속가능한 발전</span>으로 대한민국의 미래를 함께 만들어갑니다.</p>
+                    <div class="policy-table" style="margin-top: 25px;">
+                        <div style="text-align: center; font-weight: 700; color: #FFD700;">
+                            "모든 정책의 중심은 국민입니다"
+                        </div>
+                    </div>
+                </div>
+                <div class="card-emoji">🌟</div>
+            </div>
+            
+            <!-- 탐색 버튼 -->
+            <div class="card-navigation">
+                <button class="nav-btn" id="prev-btn">←</button>
+                <button class="nav-btn" id="next-btn">→</button>
+            </div>
+            
+            <!-- 인디케이터 -->
+            <div class="card-indicators">
+                <span class="indicator active" data-index="0"></span>
+                <span class="indicator" data-index="1"></span>
+                <span class="indicator" data-index="2"></span>
+                <span class="indicator" data-index="3"></span>
+                <span class="indicator" data-index="4"></span>
+                <span class="indicator" data-index="5"></span>
+                <span class="indicator" data-index="6"></span>
+                <span class="indicator" data-index="7"></span>
+                <span class="indicator" data-index="8"></span>
+                <span class="indicator" data-index="9"></span>
+                <span class="indicator" data-index="10"></span>
+            </div>
+        </div>
+        
+        <div class="status">
+            <p>카드 <span id="current-card">1</span> / 11 • SWIPE FOR MORE</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            const indicators = document.querySelectorAll('.indicator');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentCardText = document.getElementById('current-card');
+            let currentCardIndex = 0;
+            
+            // 카드 업데이트 함수
+            function updateCard(index) {
+                cards.forEach(card => card.classList.remove('active'));
+                indicators.forEach(ind => ind.classList.remove('active'));
+                
+                cards[index].classList.add('active');
+                indicators[index].classList.add('active');
+                currentCardText.textContent = index + 1;
+                currentCardIndex = index;
+            }
+            
+            // 이전 카드로 이동
+            function prevCard() {
+                let newIndex = currentCardIndex - 1;
+                if (newIndex < 0) newIndex = cards.length - 1;
+                updateCard(newIndex);
+            }
+            
+            // 다음 카드로 이동
+            function nextCard() {
+                let newIndex = currentCardIndex + 1;
+                if (newIndex >= cards.length) newIndex = 0;
+                updateCard(newIndex);
+            }
+            
+            // 이벤트 리스너 설정
+            prevBtn.addEventListener('click', prevCard);
+            nextBtn.addEventListener('click', nextCard);
+            
+            // 인디케이터 클릭 이벤트
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    updateCard(index);
+                });
+            });
+            
+            // 키보드 화살표 키 지원
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') prevCard();
+                if (e.key === 'ArrowRight') nextCard();
+            });
+            
+            // 터치 이벤트 처리
+            const slider = document.querySelector('.card-slider');
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            slider.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            slider.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    nextCard(); // 왼쪽으로 스와이프 -> 다음 카드
+                }
+                if (touchEndX > touchStartX + 50) {
+                    prevCard(); // 오른쪽으로 스와이프 -> 이전 카드
+                }
+            }
+            
+            // 자동 슬라이드 (8초마다)
+            let autoSlide = setInterval(nextCard, 8000);
+            
+            // 사용자 상호작용 시 자동 슬라이드 일시 중지 후 재시작
+            function resetAutoSlide() {
+                clearInterval(autoSlide);
+                autoSlide = setInterval(nextCard, 8000);
+            }
+            
+            prevBtn.addEventListener('click', resetAutoSlide);
+            nextBtn.addEventListener('click', resetAutoSlide);
+            indicators.forEach(ind => ind.addEventListener('click', resetAutoSlide));
+            slider.addEventListener('touchend', resetAutoSlide);
+        });
+    </script>
+</body>
+</html>
